@@ -1,0 +1,51 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "darelhouma",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-11-26",
+  "compatibility_flags": ["global_fetch_strictly_public"],
+
+  "observability": {
+    "enabled": true
+  },
+
+  "account_id": "d12216ed346fd4da40210b6466b500fc",
+  "workers_dev": true,
+
+  // R2 par défaut local (dev)
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_BUCKET",
+      "bucket_name": "darelhouma-media-dev"
+    }
+  ],
+
+  "env": {
+    "development": {
+      "name": "darelhouma-dev",
+      "vars": {
+        "ENVIRONMENT": "development"
+      },
+      "r2_buckets": [
+        {
+          "binding": "MEDIA_BUCKET",
+          "bucket_name": "darelhouma-media-dev"
+        }
+      ]
+    },
+
+    "production": {
+      "name": "darelhouma",
+      "vars": {
+        "ENVIRONMENT": "production"
+      },
+      "usage_model": "bundled",
+      "r2_buckets": [
+        {
+          "binding": "MEDIA_BUCKET",
+          "bucket_name": "darelhouma-media-prod"
+        }
+      ]
+    }
+  }
+}
