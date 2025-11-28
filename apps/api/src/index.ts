@@ -1,50 +1,98 @@
-import { Hono } from 'hono';
-import { coresMiddleware } from './middlewares/cors';
-import { authMiddleware } from './middlewares/auth';
-import authRouter from './routes/auth';
-import healthRouter from './routes/health';
-import type { Env } from './types/env';
+// apps/api/src/index.ts
+import { Hono } from 'hono'
+import { logger } from 'hono/logger'
 
-const app = new Hono<{ Bindings: Env }>();
+// Middlewares persos
+import { coresMiddleware } from './middlewares/cors'
+import { authMiddleware } from './middlewares/auth'
 
-// Active le cors sur. tous les routes
-app.use('*', coresMiddleware());
+// Routes
+import authRouter from './routes/auth'
+import healthRouter from './routes/health'
 
-// Routes de health check
-app.route('/health', healthRouter);
+import type { Env, Variables} from './types/env'
 
-// routes d'authentification
-app.route('/auth', authRouter);
 
-// Routes protégées par authentification
-app.use('/api/*', authMiddleware());
+const app = new Hono<{ Bindings: Env, Variables: Variables }>()
 
-// route racine
+// ============================================
+// MIDDLEWARES GLOBAUX
+// ============================================
+
+// CORS (personnalisé)
+app.use('/*', coresMiddleware())
+
+// Logger global
+app.use('/*', logger())
+
+// ============================================
+// ROUTES PUBLIQUES
+// ============================================
+
+// Health check
+app.route('/health', healthRouter)
+
+// Auth
+app.route('/auth', authRouter)
+
+// ============================================
+// ROUTES PROTÉGÉES
+// ============================================
+
+app.use('/api/*', authMiddleware)
+
+// Exemple d'endpoint protégé
+app.get('/api/profile', (c) => {
+  return c.json({
+    message: 'Accès autorisé',
+    user: c.get('user')
+  })
+})
+
+// ============================================
+// ROUTE RACINE
+// ============================================
+
 app.get('/', (c) => {
   return c.json({
-    name: 'Dar el Houma',
+    name: 'Dar El Houma API',
     version: '1.0.0',
     environment: c.env.ENVIRONMENT,
+    status: 'running',
     endpoints: {
       health: '/health',
       auth: '/auth',
-      docs: '/docs',
-    },
-  });
-});
+      apiProtected: '/api/*',
+      docs: '/docs'
+    }
+  })
+})
 
-// Route introuvable 404
+// ============================================
+// GESTION DES ERREURS
+// ============================================
+
+// 404
 app.notFound((c) => {
-  return c.json({ error: 'Route introuvable' }, 404);
-});
+  return c.json(
+    {
+      error: 'Route introuvable',
+      path: c.req.path
+    },
+    404
+  )
+})
 
-// Capte toutes les erreurs non interceptées 500
+// 500
 app.onError((err, c) => {
-  console.error('Erreur non interceptée:', err);
-  return c.json({
-    error: 'Erreur interne du serveur',
-    message: err.message,
-  }, 500);
-});
+  console.error('Erreur non interceptée:', err)
+  return c.json(
+    {
+      error: 'Erreur interne du serveur',
+      message: err.message
+    },
+    500
+  )
+})
 
-export default app;
+export default app
