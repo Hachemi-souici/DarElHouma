@@ -167,3 +167,4 @@ dist
 .wrangler/
 supabase-credentials-dev.txt
 supabase-credentials-prod.txt
+test*.sh

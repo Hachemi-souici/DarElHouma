@@ -22,7 +22,7 @@ healthRouter.get('/', (c) => {
  //Vérifie si la base de données  est connectée et répond .
 healthRouter.get('/db', async (c) => {
   try {
-    const { createSupabaseClient } = await import('../services/supabasa');
+    const { createSupabaseClient } = await import('../services/supabase');
     const supabase = createSupabaseClient(c.env);
 
     // Requête test :  lecture dans la table "profiles"

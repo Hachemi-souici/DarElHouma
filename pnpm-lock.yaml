@@ -27,11 +27,14 @@ importers:
         specifier: ^1.3.3
         version: 1.19.6(hono@3.12.12)
       '@supabase/supabase-js':
-        specifier: ^2.39.0
+        specifier: ^2.86.0
         version: 2.86.0
       hono:
         specifier: ^3.11.7
         version: 3.12.12
+      jose:
+        specifier: ^6.1.2
+        version: 6.1.2
       twilio:
         specifier: ^4.19.0
         version: 4.23.0
@@ -2864,6 +2867,10 @@ packages:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
     hasBin: true
     dev: true
+
+  /jose@6.1.2:
+    resolution: {integrity: sha512-MpcPtHLE5EmztuFIqB0vzHAWJPpmN1E6L4oo+kze56LIs3MyXIj9ZHMDxqOvkP38gBR7K1v3jqd4WU2+nrfONQ==}
+    dev: false
 
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}

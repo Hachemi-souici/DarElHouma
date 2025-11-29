@@ -1,47 +1,33 @@
-import { Context, Next } from 'hono';
-import { createSupabaseClient, verifyToken } from '../services/supabasa';
-import type { Env, Variables} from '../types/env';
+import type { Context, Next } from 'hono';
+import type { AppBindings } from '../types/env';
+import { createSupabaseClient } from '../services/supabase';
 
-export function authMiddleware() {
-  return async (c: Context<{ Bindings: Env, Variables: Variables}>, next: Next) => {
-    const authHeader = c.req.header('Authorization');
+export async function authMiddleware(
+  c: Context<AppBindings>,
+  next: Next
+) {
+  const authHeader =
+    c.req.header('authorization') ?? c.req.header('Authorization');
 
-    if (!authHeader?.startsWith('Bearer ')) {
-      return c.json({ error: "En-tête d'autorisation manquant ou invalide "}, 401);
-    }
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return c.json({ error: "Token manquant ou invalide" }, 401);
+  }
 
-    const token = authHeader.split(' ')[1];
-    const supabase = createSupabaseClient(c.env);
+  const token = authHeader.split(' ')[1];
 
-    const { user, error } = await verifyToken(supabase, token);
+  const supabase = createSupabaseClient(c.env);
 
-    if (error || !user) {
-      return c.json({ error: 'Token invalide ou expiré' }, 401);
-    }
+  const { data, error } = await supabase.auth.getUser(token);
 
-    // Attacher l'utilisateur au contexte
-    c.set('user', user);
-    c.set('userId', user.id);
+  if (error || !data?.user) {
+    return c.json({ error: "Token invalide ou expiré" }, 401);
+  }
 
-    await next();
-  };
-}
+  const user = data.user; // <-- ici TS sait que c'est un User
 
-export function optionalAuthMiddleware() {
-  return async (c: Context<{ Bindings: Env, Variables: Variables }>, next: Next) => {
-    const authHeader = c.req.header('Authorization');
+  c.set('token', token);
+  c.set('userId', user.id);
+  c.set('user', user);
 
-    if (authHeader?.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      const supabase = createSupabaseClient(c.env);
-      const { user } = await verifyToken(supabase, token);
-
-      if (user) {
-        c.set('user', user);
-        c.set('userId', user.id);
-      }
-    }
-
-    await next();
-  };
+  await next();
 }
