@@ -1,3 +1,6 @@
+
+ // Variables d'environnement de ton Worker (Wrangler).
+ 
 export interface Env {
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
@@ -14,8 +17,20 @@ export interface Env {
   [key: string]: unknown;
 }
 
-export interface Variables extends Record<string, any> {
+export interface Variables extends Record<string, unknown> {
   token?: string;
   userId?: string;
-  user?: any;
+  user?: User;
 }
+
+ //Typage générique utilisé pour ton app Hono:
+
+export type AppBindings = {
+  Bindings: Env
+  Variables: Variables
+}
+
+
+//Permet d'éviter de répéter Context<{ Bindings: Env; Variables: Variables }>
+
+export type AppContext = Context<AppBindings>

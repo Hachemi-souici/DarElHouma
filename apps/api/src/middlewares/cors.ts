@@ -1,11 +1,11 @@
-import { Env } from "@/types/env";
+import {AppBindings} from "@/types/env";
 import { Context, Next } from "hono";
 import { boolean } from "zod/v4";
 
 
 
 export function coresMiddleware() {
-    return async (c: Context<{ Bindings: Env }>, next: Next) => {
+    return async (c: Context<AppBindings>, next: Next) => {
         const origin = c.req.header("Origin") || '';
         const allowedOrigins = (c.env.ALLOWED_ORIGINS ?? '*')
         .split(',')

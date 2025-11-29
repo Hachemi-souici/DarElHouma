@@ -4,10 +4,10 @@ import {
   createSupabaseClient,
   createUserSupabaseClient
 } from "../services/supabase";
-import type { Env, Variables } from "../types/env";
+import type { AppBindings} from "../types/env";
 import { authMiddleware } from "@/middlewares/auth";
 
-const authRouter = new Hono<{ Bindings: Env; Variables: Variables }>();
+const authRouter = new Hono<AppBindings>();
 
 const registerSchema = z.object({
   email: z.string().email("Email invalide"),

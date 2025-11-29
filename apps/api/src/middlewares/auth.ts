@@ -1,9 +1,9 @@
 import type { Context, Next } from 'hono';
-import type { Env, Variables } from '../types/env';
+import type { AppBindings } from '../types/env';
 import { createSupabaseClient } from '../services/supabase';
 
 export async function authMiddleware(
-  c: Context<{ Bindings: Env; Variables: Variables }>,
+  c: Context<AppBindings>,
   next: Next
 ) {
   const authHeader =

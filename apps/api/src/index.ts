@@ -10,10 +10,10 @@ import { authMiddleware } from './middlewares/auth'
 import authRouter from './routes/auth'
 import healthRouter from './routes/health'
 
-import type { Env, Variables} from './types/env'
+import type { AppBindings } from './types/env'
 
 
-const app = new Hono<{ Bindings: Env, Variables: Variables }>()
+const app = new Hono<AppBindings>()
 
 // ============================================
 // MIDDLEWARES GLOBAUX
